@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/1.0.4338480">
+  <PropertyGroup>
+    <StartupCommand>pnpm run dev</StartupCommand>
+    <JavaScriptTestRoot>.\</JavaScriptTestRoot>
+    <JavaScriptTestFramework>Vitest</JavaScriptTestFramework>
+    <!-- Allows the build (or compile) script located on package.json to run on Build -->
+    <ShouldRunBuildScript>false</ShouldRunBuildScript>
+    <!-- Folder where production build objects will be placed -->
+    <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
+    <ShouldRunNpmInstall>false</ShouldRunNpmInstall>
+    <LaunchUrl>http://localhost:5173</LaunchUrl>
+  </PropertyGroup>
+  <!-- Run pnpm install instead -->
+  <Target Name="RunPnpmInstall" BeforeTargets="CoreCompile;NPMRestore;GeneratePackageJsonProps" Inputs="$(PackageJsonDirectory)\package.json" Outputs="$(IntermediateOutputPath).pnpm-install-check">
+    <Exec Command="node --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCodeNodeVersion" />
+    </Exec>
+    <Error Condition="'$(ErrorCodeNodeVersion)' != '0'" Text="Node.js is required. Install from https://nodejs.org/" />
+    <Message Importance="high" Text="Restoring dependencies using 'pnpm'..." />
+    <Exec WorkingDirectory="$(PackageJsonDirectory)" Command="pnpm install" EnvironmentVariables="CI=true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCodePnpmInstall" />
+    </Exec>
+    <Touch Files="$(IntermediateOutputPath).pnpm-install-check" Condition="'$(ErrorCodePnpmInstall)' == '0'" AlwaysCreate="true" />
+  </Target>
+  <ItemGroup>
+    <None Remove=".git-blame-ignore-revs" />
+    <None Remove=".gitattributes" />
+    <None Remove=".gitignore" />
+  </ItemGroup>
+</Project>
