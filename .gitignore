@@ -101,4 +101,4 @@ vitest.config.*.timestamp*
 
 .amp
 /.vs
-/obj/Debug/comfy-frontend.esproj.CoreCompileInputs.cache
+/obj/
