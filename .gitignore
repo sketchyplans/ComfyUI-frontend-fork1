@@ -97,3 +97,4 @@ vitest.config.*.timestamp*
 /output.txt
 
 .amp
+/.vs
